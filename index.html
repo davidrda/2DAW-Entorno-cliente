@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Peladillos Eladio: simulador didáctico de reservas y servicios para practicar fundamentos de JavaScript.">
+  <title>Peladillos Eladio | Barbería didáctica</title>
+  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav container" aria-label="Navegación principal">
+      <a class="brand" href="#inicio" aria-label="Peladillos Eladio, inicio">✂ <span>Peladillos Eladio</span></a>
+      <div class="nav-links">
+        <a href="#servicios">Servicios</a><a href="#reserva">Reserva</a><a href="#laboratorio">Laboratorio JS</a>
+      </div>
+    </nav>
+    <div class="container hero-grid" id="inicio">
+      <section>
+        <p class="eyebrow">BARBERÍA · DESDE 1998</p>
+        <h1>Un buen corte.<br><em>Y un JavaScript mejor.</em></h1>
+        <p class="lead">Proyecto práctico para trabajar variables, tipos, operadores, decisiones, bucles, ámbito, conversiones, documentación y depuración.</p>
+        <a class="btn primary" href="#reserva">Reservar turno</a>
+      </section>
+      <aside class="hero-card" aria-label="Estado de la barbería">
+        <span class="status-dot"></span><strong>Abierto hoy</strong>
+        <p>Elige servicio, horario y extras. El total se calcula en tiempo real.</p>
+        <div class="price-big">desde <b>12 €</b></div>
+      </aside>
+    </div>
+  </header>
+
+  <main>
+    <section class="container section" id="servicios">
+      <p class="eyebrow">LA CARTA</p><h2>Servicios sin rodeos</h2>
+      <div id="servicesGrid" class="cards" aria-live="polite"></div>
+    </section>
+
+    <section class="booking section" id="reserva">
+      <div class="container booking-grid">
+        <div>
+          <p class="eyebrow">TU TURNO</p><h2>Configura tu visita</h2>
+          <form id="bookingForm" novalidate>
+            <label>Nombre <input id="clientName" name="clientName" type="text" placeholder="Ej. Ana" autocomplete="name"></label>
+            <label>Servicio <select id="serviceSelect" name="service"></select></label>
+            <div class="two-cols">
+              <label>Edad <input id="clientAge" name="age" type="number" min="0" max="120" value="25"></label>
+              <label>Día <select id="daySelect" name="day"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option><option>Domingo</option></select></label>
+            </div>
+            <fieldset><legend>Extras</legend>
+              <label class="check"><input type="checkbox" name="extras" value="lavado"> Lavado premium (+4 €)</label>
+              <label class="check"><input type="checkbox" name="extras" value="cejas"> Repaso de cejas (+3 €)</label>
+            </fieldset>
+            <label>Código descuento <input id="coupon" name="coupon" type="text" placeholder="ELADIO10"></label>
+            <label class="check"><input id="member" type="checkbox" name="member"> Soy socio del Club Eladio</label>
+            <button class="btn primary" type="submit">Confirmar reserva</button>
+            <p id="formMessage" class="form-message" role="status"></p>
+          </form>
+        </div>
+        <aside class="ticket" aria-live="polite">
+          <p class="ticket-title">RESUMEN</p><div id="ticketContent"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="container section" id="laboratorio">
+      <p class="eyebrow">MODO APRENDIZAJE</p><h2>Laboratorio JavaScript</h2>
+      <p class="section-copy">Los botones ejecutan ejemplos reales del archivo <code>app.js</code>. Abre también la consola del navegador para seguir los mensajes de diagnóstico.</p>
+      <div class="lab-actions">
+        <button class="btn ghost" data-demo="types">Tipos y typeof</button>
+        <button class="btn ghost" data-demo="numbers">NaN, Infinity y decimales</button>
+        <button class="btn ghost" data-demo="coercion">Coerción y falsy</button>
+        <button class="btn ghost" data-demo="loops">Todos los bucles</button>
+        <button class="btn ghost" data-demo="scope">Ámbito y hoisting</button>
+        <button class="btn ghost" data-demo="errors">Errores controlados</button>
+      </div>
+      <pre id="consoleOutput" class="console" aria-live="polite">// Pulsa un ejemplo para ver su salida…</pre>
+    </section>
+  </main>
+
+  <footer><div class="container"><strong>Peladillos Eladio</strong><span>Proyecto didáctico · JavaScript moderno</span></div></footer>
+  
+</body>
+</html>
