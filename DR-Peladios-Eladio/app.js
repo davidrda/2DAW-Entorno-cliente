@@ -1,521 +1,447 @@
-/*
- * MODO ESTRICTO: 'use strict'
- * ============================
- *
- * Activa el "modo estricto" de JavaScript.
- *
- * Este modo hace que JavaScript sea más exigente con ciertos
- * errores que de otra forma podrían pasar desapercibidos.
- *
- * Por ejemplo, ayuda a evitar utilizar accidentalmente variables
- * que no han sido declaradas.
- *
- * Es una buena práctica, especialmente mientras aprendemos.
- */
 'use strict';
 
-const nombrePelu = "Peladillos Eladio";
+// Peladillos Eladio: reserva de servicios de barbería.
+// Flujo: DATOS -> funciones que los procesan -> HTML que ve el usuario.
 
-console.log(nombrePelu);
-
-/* Sobre undefined:
- * Declaramos una variable llamada clientesAtendidos.
- *
- * No le estamos dando ningún valor inicialmente.
- *
- * Por tanto, JavaScript le asignará automáticamente:
- *
- * undefined
- *
- * undefined significa que la variable existe,
- * pero todavía no tiene un valor asignado.
- */
-let clientesAtendidos;
+'use strict';
 
 
-/*
- * Mostramos el contenido de clientesAtendidos.
- *
- * Resultado:
- *
- * Clientes atendidos: undefined
- */
-console.log('Clientes atendidos: ', clientesAtendidos);
+// ============================================================================
+// DATOS
+// ============================================================================
 
-clientesAtendidos = 10;
-
-clientesAtendidos = "pepe";
-
-console.log('Clientes atendidos: ', clientesAtendidos);
-
-const precioCorte = 8;
-const precioBarba = 8.50;
-
-
-/*
- * typeof permite saber el tipo de un dato.
- *
- * typeof precioCorte
- *
- * devuelve:
- *
- * "number"
- */
-console.log('Precio Corte: ', typeof precioCorte);
-
-
-/*
- * Aunque precioBarba tenga decimales, también es number.
- *
- * Resultado:
- *
- * Precio Barba: number
- */
-console.log('Precio Barba: ', typeof precioBarba);
-
-const nombreCiente = 'Pepe Rodríguez';
-const servicio = "Corte y barba";
-
-
-/*
- * Mostramos los valores.
- */
-console.log('nombreCiente: ', nombreCiente);
-console.log('servicio: ', servicio);
-
-const tieneCita = true;
-const tieneDescuento = false;
-
-
-/*
- * Mostrará:
- *
- * tieneCita: true
- */
-console.log('tieneCita: ', tieneCita);
-
-
-/*
- * typeof true devuelve:
- *
- * "boolean"
- */
-console.log('tieneCita: ', typeof tieneCita);
-
-
-
-/*
- * ============================================================
- * UNDEFINED
- * ============================================================
- */
-
-/*
- * Declaramos la variable pero NO le asignamos ningún valor.
- */
-let horaCita;
-
-
-/*
- * Su contenido será:
- *
- * undefined
- */
-console.log('horaCita: ', horaCita);
-
-
-/*
- * Curiosamente, el tipo también será:
- *
- * "undefined"
- */
-console.log('horaCita: ', typeof horaCita);
-
-
-
-/*
- * ============================================================
- * NULL
- * ============================================================
- */
-
-/*
- * null se utiliza para representar intencionadamente
- * la ausencia de un valor.
- *
- * Aquí estamos indicando que el cliente no tiene
- * un teléfono almacenado.
- *
- * Hay una diferencia conceptual importante:
- *
- * undefined -> todavía no se ha asignado un valor.
- *
- * null -> nosotros hemos indicado explícitamente que
- *         no hay valor.
- */
-const telCliente = null;
-
-
-console.log('telCliente: ', telCliente);
-
-
-/*
- * Aquí aparece una peculiaridad histórica de JavaScript.
- *
- * Podríamos pensar que:
- *
- * typeof null
- *
- * devolvería:
- *
- * "null"
- *
- * PERO NO.
- *
- * Devuelve:
- *
- * "object"
- *
- * Esto es un comportamiento histórico de JavaScript
- * que se mantiene por compatibilidad.
- */
-console.log('telCliente: ', typeof telCliente);
-
-const serviciosDisponibles = [
-    'Corte clásico',
-    'Carte moderno',
-    'Barba'
-];
-
-
-/*
- * Mostramos el array completo.
- */
-console.log('Servicios: ', serviciosDisponibles);
-
-
-/*
- * Aquí encontramos otra característica importante.
- *
- * typeof aplicado a un Array devuelve:
- *
- * "object"
- *
- * NO devuelve "array".
- */
-console.log('Servicios: ', typeof serviciosDisponibles);
-
-
-/*
- * Entonces, ¿cómo podemos comprobar correctamente si algo
- * es un Array?
- *
- * Utilizando:
- *
- * Array.isArray()
- *
- * En este caso devolverá:
- *
- * true
- */
-console.log(
-    'es un array? : ',
-    Array.isArray(serviciosDisponibles)
-);
-
-
-
-/*
- * ============================================================
- * OBJETOS
- * ============================================================
- *
- * Los objetos permiten agrupar información relacionada.
- */
-
-const cliente = {
-
-    // Propiedad String
-    nombre: 'Ana',
-
-    // Propiedad Number
-    edad: 30,
-
-    // Propiedad Boolean
-    tieneCita: true
+// Objeto: agrupa datos relacionados. Se accede con TIENDA.nombre.
+// const impide reasignar TIENDA, pero sus propiedades SÍ se pueden modificar.
+const TIENDA = {
+    nombre: 'Peladillos Eladio',
+    divisa: 'EUR',
+    idioma: 'es-ES',
+    edadMinima: 16
 };
 
+// Array de objetos. Los índices empiezan en 0: SERVICIOS[0].name -> 'Corte clásico'
+const SERVICIOS = [
 
-/*
- * Podemos mostrar el objeto completo.
- */
-console.log('Objeto cliente : ', cliente);
+    {
+        id: 'clasico',
+        name: 'Corte clásico',
+        precio: 12,
+        duracion: 25,
+    },
 
+    {
+        id: 'Tupper fade',
+        name: 'Corte fade',
+        precio: 15,
+        duracion: 35,
+    },
 
-/*
- * Para acceder a una propiedad podemos utilizar
- * la notación del punto:
- *
- * objeto.propiedad
- *
- * Por tanto:
- *
- * cliente.nombre
- *
- * devuelve:
- *
- * "Ana"
- */
-console.log('Nombre cliente : ', cliente.nombre);
+    {
+        id: 'Brocoli',
+        name: 'Corte brocoli',
+        precio: 20,
+        duracion: 15,
+    },
 
+];
 
-/*
- * typeof aplicado a un objeto devuelve:
- *
- * "object"
- */
-console.log('Tipo cliente : ', typeof cliente);
+// Objeto de objetos: se accede por clave, no por posición.
+// Las tres formas dan el mismo dato:
+//   EXTRAS.lavado.nombre | EXTRAS['lavado'].nombre | EXTRAS.lavado['nombre']
+const EXTRAS = {
 
+    lavado: {
+        nombre: 'Lavado gostoso',
+        precio: 100
+    },
 
+    cejas: {
+        nombre: 'Pulido de cejas',
+        precio: 3
+    },
 
-/*
- * ============================================================
- * TIPADO DINÁMICO
- * ============================================================
- *
- * Esta parte demuestra una característica fundamental
- * de JavaScript.
- */
+};
 
-/*
- * Primero dato contiene un número.
- */
-let dato = 25;
+// Constantes con nombre en vez de números "mágicos" (0.05 = 5 %).
+const DESCUENTO_MIEMBROS = 0.05;
 
-console.log('Dato : ', dato);
+const CODIGO_CUPON = 'ELADIO10';
 
-// number
-console.log('Tipo Dato : ', typeof dato);
+const CUPON_DESCUENTO = 0.10;
 
 
-/*
- * Ahora la MISMA variable pasa a contener un String.
- *
- * Esto es válido en JavaScript.
- */
-dato = 'Pepe';
+// ============================================================================
+// ELEMENTOS DEL DOM
+// ============================================================================
 
-console.log('Dato : ', dato);
+// querySelector('#id') busca el elemento con ese id. Guardamos la referencia
+// para poder modificarlo desde JS.
+const servicesGrid = document.querySelector('#servicesGrid');
 
-// string
-console.log('Tipo Dato : ', typeof dato);
+const serviceSelect = document.querySelector('#serviceSelect');
 
+const bookingForm = document.querySelector('#bookingForm');
 
-/*
- * Ahora vuelve a cambiar de tipo.
- *
- * Esta vez contiene un boolean.
- */
-dato = true;
+const ticketContent = document.querySelector('#ticketContent');
 
-console.log('Dato : ', dato);
-
-// boolean
-console.log('Tipo Dato : ', typeof dato);
+const formMessage = document.querySelector('#formMessage');
 
 
-/*
- * Esto demuestra el TIPADO DINÁMICO:
- *
- * dato = 25;       -> number
- *
- * dato = 'Pepe';   -> string
- *
- * dato = true;     -> boolean
- */
+// ============================================================================
+// FUNCIONES AUXILIARES
+// ============================================================================
+
+// Número -> texto con formato de dinero. formatMoney(10) -> "10,00 €"
+function formatMoney(importe) {
+
+    // Intl.NumberFormat usa el idioma y la divisa de TIENDA.
+    const formatter = new Intl.NumberFormat(
+        TIENDA.idioma,
+        {
+            style: 'currency',
+            currency: TIENDA.divisa
+        }
+    );
+
+    return formatter.format(importe);
+}
+
+// Convierte caracteres especiales en entidades HTML para que se muestren
+// como texto y no como etiquetas (evita XSS con innerHTML).
+// OJO: & va PRIMERO. Si fuera después, volvería a escapar el & de &lt;, &gt;...
+function escapeHtml(value) {
+
+    return String(value)
+
+        .replaceAll('&', '&amp;')
+
+        .replaceAll('<', '&lt;')
+
+        .replaceAll('>', '&gt;')
+
+        .replaceAll('"', '&quot;')
+
+        .replaceAll("'", '&#039;');
+
+}
+
+// find() devuelve el PRIMER elemento que cumpla la condición, o undefined
+// si ninguno la cumple.
+function buscarServicio(id) {
+
+    return SERVICIOS.find(
+
+        // Función flecha: "¿el id de este servicio es el que busco?"
+        (servicio) => servicio.id === id
+
+    );
+
+}
+
+
+// ============================================================================
+// PINTAR SERVICIOS
+// ============================================================================
+
+// Versión 1: construir HTML como texto y volcarlo con innerHTML.
+function renderizarServicios() {
+
+    let cardsHtml = '';
+    let optionHtml = '';
+
+    for (const servicio of SERVICIOS) {
+
+        // += AÑADE al texto anterior (con = se perdería la tarjeta previa).
+        // Los template literals (` `) permiten varias líneas y ${expresión}.
+        cardsHtml += `
+          <article class="article">
+
+              <h3>${servicio.name}</h3>
+
+              <p>${servicio.duracion} min</p>
+
+              <span class="price">
+                  ${formatMoney(servicio.precio)}
+              </span>
+
+          </article>
+        `;
+
+        optionHtml += `
+            <option value="${servicio.id}">
+                ${servicio.name} - ${formatMoney(servicio.precio)}
+            </option>
+        `;
+
+    }
+
+    // Se asigna UNA vez, fuera del bucle.
+    servicesGrid.innerHTML = cardsHtml;
+    serviceSelect.innerHTML = optionHtml;
+
+}
+
+// Versión 2: crear nodos del DOM uno a uno (sin interpretar HTML).
+// Más código, pero más seguro: textContent nunca ejecuta etiquetas.
+function renderizarServiciosCreate() {
+
+    // En cada vuelta, "servicio" es UNO de los objetos del array.
+    // const vale porque cada vuelta crea una variable nueva.
+    for (const servicio of SERVICIOS) {
+
+        // createElement crea el nodo, pero NO aparece en la página
+        // hasta que se añade a un elemento que ya esté en el documento.
+        const article = document.createElement('article');
+
+        article.classList.add('card');
+
+        const title = document.createElement('h3');
+
+        // textContent inserta TEXTO: '<strong>' se vería literal.
+        // innerHTML lo interpretaría como etiqueta.
+        title.textContent = servicio.name;
+
+        const duracion = document.createElement('p');
+
+        duracion.textContent = `${servicio.duracion} min`;
+
+        const precio = document.createElement('span');
+
+        precio.classList.add('price');
+
+        precio.textContent = formatMoney(servicio.precio);
+
+        // append() mete los nodos como hijos; el orden importa.
+        article.append(
+            title,
+            duracion,
+            precio
+        );
+
+        // Último paso: conectar la tarjeta a la página.
+        servicesGrid.append(article);
+
+    }
+
+}
+
+
+// ============================================================================
+// FORMULARIO
+// ============================================================================
+
+// Lee el formulario y devuelve un objeto con tipos ya correctos
+// (string, number, array, boolean). Solo LEE: no valida ni calcula.
+function leerFormulario() {
+
+    // FormData lee los campos por su atributo name (no por id).
+    const datos = new FormData(bookingForm);
+
+    // Se lee de dentro hacia fuera:
+    //   get()  -> valor del campo, o null si no existe
+    //   ??     -> si es null/undefined, usa ''
+    //   String -> asegura tipo texto
+    //   trim   -> quita espacios de los extremos (devuelve un string nuevo)
+    const nombre = String(
+        datos.get('clientName') ?? ''
+    ).trim();
+
+    // Los campos de formulario siempre llegan como TEXTO.
+    // '25' + 1 daría '251'; Number('25') + 1 da 26.
+    // Si no es numérico, Number() devuelve NaN (se comprueba en validarReserva).
+    const edad = Number(
+        datos.get('age')
+    );
+
+    // get() solo devuelve el PRIMER valor; getAll() devuelve todos en un array.
+    // Varios checkbox con el mismo name="extras" -> ['lavado', 'cejas'] o [].
+    const extras = datos
+        .getAll('extras')
+        .map(String);
+
+    // Normaliza el cupón: '  eladio10  ' -> 'ELADIO10'.
+    const coupon = String(
+        datos.get('coupon') ?? ''
+    )
+        .trim()
+        .toUpperCase();
+
+    // Guardamos el id (value de la opción), no el precio:
+    // el precio se recupera luego con buscarServicio().
+    const servicioId = String(
+        datos.get('service') ?? ''
+    );
+
+    const dia = String(
+        datos.get('day') ?? ''
+    );
+
+    // Checkbox: marcado -> 'on'; sin marcar -> null (no true/false).
+    const esMiembro = datos.get('member') === 'on';
+
+    // Propiedad abreviada: { nombre } equivale a { nombre: nombre }.
+    return {
+        nombre,
+        edad,
+        servicioId,
+        dia,
+        extras,
+        coupon,
+        esMiembro
+    };
+
+}
+
+// Devuelve un array con TODOS los errores (vacío = reserva válida).
+// No los muestra: eso lo decide quien la llame.
+function validarReserva(reserva) {
+
+    const errores = [];
+
+    // '' es falsy, y trim() ya convirtió "   " en ''.
+    if (!reserva.nombre) {
+
+        errores.push('Escribe tu nombre');
+
+    }
+
+    // OJO: NaN === NaN es false, por eso se usa Number.isNaN().
+    if (Number.isNaN(reserva.edad)) {
+
+        errores.push('La edad debe de ser un número');
+
+    } else if (
+        reserva.edad < TIENDA.edadMinima ||
+        reserva.edad > 120
+    ) {
+
+        errores.push(
+            `La edad debe de estar entre ${TIENDA.edadMinima} y 120`
+        );
+
+    }
+
+    // buscarServicio() devuelve undefined si no existe -> !undefined es true.
+    if (!buscarServicio(reserva.servicioId)) {
+
+        errores.push('El servicio no existe');
+
+    }
+
+    if (!reserva.dia) {
+
+        errores.push('Selecciona un día');
+
+    }
+
+    return errores;
+
+}
+
+
+// ============================================================================
+// CÁLCULO DEL PRECIO (EJERCICIO)
+// ============================================================================
+
+// Recibe el objeto de leerFormulario() y devuelve { subtotal, descuento, total }.
+// No debe modificar SERVICIOS, EXTRAS ni la reserva recibida.
+function calcularReserva(reserva) {
+
+    const servicio = buscarServicio(reserva.servicioId);
+
+    // ?. evita error si servicio es undefined; ?? 0 da un valor por defecto.
+    // let porque subtotal cambiará al sumar los extras.
+    let subtotal = servicio?.precio ?? 0;
+
+
+    // ==================================================================
+    // PASO 3. EXTRAS
+    // reserva.extras es un array de claves de EXTRAS: ['lavado', 'cejas']
+    // ==================================================================
+
+    // ACTIVIDAD 1: recorre reserva.extras con for...of.
+    //   - ¿Qué variable representa cada extra seleccionado?
+    //   - ¿Cuántas vueltas da con dos extras? ¿Y con el array vacío?
+
+    // ACTIVIDAD 2: dentro del bucle, obtén el objeto del extra.
+    //   PISTA: para usar el contenido de una variable como clave, corchetes:
+    //          const clave = 'lavado'; EXTRAS[clave]
+    //   - ¿Por qué no sirve EXTRAS.clave?
+
+    // ACTIVIDAD 3: comprueba que el extra existe antes de sumarlo.
+    //   PISTA: EXTRAS['inexistente'] devuelve undefined.
+
+    // ACTIVIDAD 4: si existe, súmalo a subtotal.
+    //   PISTA: let total = 10; total += 5;  // 15
+    //   - ¿Qué propiedad del extra guarda el precio?
+    //
+    // COMPROBACIÓN: servicio 12 € + lavado 100 € + cejas 3 € = 115 €.
+    //               Sin extras = 12 €.
+
+    // ESCRIBE AQUÍ EL CÓDIGO DE LAS ACTIVIDADES 1, 2, 3 Y 4.
 
 
 
-/*
- * ============================================================
- * OPERACIONES MATEMÁTICAS Y CONVERSIÓN DE TIPOS
- * ============================================================
- */
+    // ==================================================================
+    // PASO 4. DESCUENTOS
+    // DESCUENTO_MIEMBROS = 0.05 | CUPON_DESCUENTO = 0.10 | CODIGO_CUPON
+    // ==================================================================
 
-const precio1 = 20;
-const precio2 = 30;
+    // ACTIVIDAD 5: declara la variable del porcentaje total de descuento.
+    //   - ¿Qué valor inicial? ¿let o const? ¿Por qué?
 
-/*
- * ATENCIÓN:
- *
- * Aunque parece un número, '4' tiene comillas.
- *
- * Por tanto NO es un Number.
- *
- * Es un String.
- */
-const precio3 = '4';
+    // ACTIVIDAD 6: si reserva.esMiembro (booleano), suma DESCUENTO_MIEMBROS.
+    //   - ¿Qué estructura condicional usarías?
 
-console.log('Suma: ', precio1 + precio2);
+    // ACTIVIDAD 7: si reserva.coupon === CODIGO_CUPON, suma CUPON_DESCUENTO.
+    //   El cupón ya viene normalizado (trim + toUpperCase) desde
+    //   leerFormulario(), así que basta con ===.
+    //
+    // CRITERIO: los descuentos se SUMAN (5 % + 10 % = 15 %).
+    //           No se aplica uno y luego otro sobre el resultado reducido.
 
-
-/*
- * Esta operación es MUY IMPORTANTE:
- *
- * precio1 + precio2 + precio3
- *
- * JavaScript evalúa de izquierda a derecha.
- *
- * Primero:
- *
- * 20 + 30
- *
- * Resultado:
- *
- * 50
- *
- * Después tenemos:
- *
- * 50 + '4'
- *
- * Como '4' es un String, JavaScript convierte el 50 en texto
- * y CONCATENA.
- *
- * Resultado:
- *
- * "504"
- */
-console.log('Suma2: ', precio1 + precio2 + precio3);
-
-
-/*
- * Aquí ocurre algo diferente:
- *
- * precio3 + precio2 + precio1
- *
- * Tenemos:
- *
- * '4' + 30
- *
- * Como el primer valor es un String, se concatena:
- *
- * "430"
- *
- * Después:
- *
- * "430" + 20
- *
- * Resultado:
- *
- * "43020"
- *
- * Por tanto:
- *
- * Suma3: 43020
- */
-console.log('Suma3: ', precio3 + precio2 + precio1);
-
-console.log('Multiplica: ', precio1 * precio2);
-
-console.log('Divide: ', precio1 / precio2);
-
-console.log('Módulo: ', precio1 % precio2);
-
-
-/*
- * Aquí tenemos:
- *
- * 20 % '4'
- *
- * precio3 es un String.
- *
- * Sin embargo, el operador % necesita números.
- *
- * JavaScript intenta convertir automáticamente:
- *
- * '4' -> 4
- *
- * Entonces realiza:
- *
- * 20 % 4
- *
- * Resultado:
- *
- * 0
- */
-console.log('Módulo: ', precio1 % precio3);
-
-
-/*
- * Ocurre algo parecido con la división.
- *
- * 20 / '4'
- *
- * JavaScript convierte:
- *
- * '4' -> 4
- *
- * Resultado:
- *
- * 5
- */
-console.log('Divide: ', precio1 / precio3);
-
-
-/*
- * Y también con la multiplicación:
- *
- * 20 * '4'
- *
- * JavaScript convierte '4' a número.
- *
- * Resultado:
- *
- * 80
- */
-console.log('Multiplica: ', precio1 * precio3);
+    // ESCRIBE AQUÍ EL CÓDIGO DE LAS ACTIVIDADES 5, 6 Y 7.
 
 
 
-/*
- * ============================================================
- * OPERADORES DE COMPARACIÓN
- * ============================================================
- */
+    // ==================================================================
+    // PASO 5. IMPORTE DEL DESCUENTO
+    // ==================================================================
 
-const edad = 20;
+    // ACTIVIDAD 8: calcula cuántos euros supone el porcentaje.
+    //   Ejemplo: subtotal 100 y porcentaje 0.15 -> 15 €.
+    //   PISTA: porcentaje de una cantidad = cantidad * porcentaje.
+    //   Guárdalo en una constante.
 
-console.log(edad == 18);
-
-console.log(edad < 18);
-
-console.log(edad > 18);
-
-console.log(edad <= 18);
-
-console.log(edad >= 18);
+    // ESCRIBE AQUÍ TU CÓDIGO.
 
 
 
-/*
- * ============================================================
- * == FRENTE A ===
- * ============================================================
- *
- * Esta diferencia es MUY importante en JavaScript.
- */
+    // ==================================================================
+    // PASO 6. PRECIO FINAL
+    // ==================================================================
+
+    // ACTIVIDAD 9: calcula lo que paga el cliente.
+    //   Ejemplo: subtotal 100 € - descuento 15 € = 85 €.
+    //   Guárdalo en una constante llamada total.
+
+    // ESCRIBE AQUÍ TU CÓDIGO.
 
 
-/*
- * == comprueba igualdad permitiendo conversión de tipos.
- *
- * === comprueba:
- *
- * 1. Que el valor sea igual.
- * 2. Que el tipo sea igual.
- */
-console.log(edad === 18);
 
-console.log(edad < 18);
+    // ==================================================================
+    // PASO 7. DEVOLVER RESULTADOS
+    // ==================================================================
 
-console.log(edad > 18);
+    // ACTIVIDAD 10: devuelve un objeto con subtotal, descuento y total.
+    //   Añade también servicio para poder mostrar su nombre en el resumen.
+    //   - ¿Qué palabra reservada devuelve un valor?
+    //   - ¿Cómo se crea un objeto literal? ¿Y con la sintaxis abreviada?
+    //   OBJETIVO: const resultado = calcularReserva(reserva);
+    //             resultado.subtotal / resultado.descuento / resultado.total
+
+    // ESCRIBE AQUÍ EL RETURN.
+
+
+
+}
