@@ -3,8 +3,6 @@
 // Peladillos Eladio: reserva de servicios de barbería.
 // Flujo: DATOS -> funciones que los procesan -> HTML que ve el usuario.
 
-'use strict';
-
 
 // ============================================================================
 // DATOS
@@ -298,7 +296,7 @@ function validarReserva(reserva) {
 
     const errores = [];
 
-    // '' es falsy, y trim() ya convirtió "   " en ''.
+    // '' es false, y trim() ya convirtió "   " en ''.
     if (!reserva.nombre) {
 
         errores.push('Escribe tu nombre');
@@ -353,7 +351,7 @@ function calcularReserva(reserva) {
     // let porque subtotal cambiará al sumar los extras.
     let subtotal = servicio?.precio ?? 0;
 
-
+    
     // ==================================================================
     // PASO 3. EXTRAS
     // reserva.extras es un array de claves de EXTRAS: ['lavado', 'cejas']
@@ -380,6 +378,16 @@ function calcularReserva(reserva) {
 
     // ESCRIBE AQUÍ EL CÓDIGO DE LAS ACTIVIDADES 1, 2, 3 Y 4.
 
+    for (const extra of reserva.extras) {
+
+        const datosExtra = EXTRAS[extra];
+
+        if(datosExtra) {
+            subtotal += datosExtra.precio;
+        }
+    }
+
+
 
 
     // ==================================================================
@@ -402,6 +410,16 @@ function calcularReserva(reserva) {
 
     // ESCRIBE AQUÍ EL CÓDIGO DE LAS ACTIVIDADES 5, 6 Y 7.
 
+    let porcentajeTotal = 0;
+
+    if(reserva.esMiembro){
+        porcentajeTotal += DESCUENTO_MIEMBROS;
+    }
+
+    if(reserva.coupon === CODIGO_CUPON){
+        porcentajeTotal += CUPON_DESCUENTO;
+    }
+
 
 
     // ==================================================================
@@ -414,6 +432,7 @@ function calcularReserva(reserva) {
     //   Guárdalo en una constante.
 
     // ESCRIBE AQUÍ TU CÓDIGO.
+    const descuento = subtotal * porcentajeTotal;
 
 
 
@@ -426,6 +445,7 @@ function calcularReserva(reserva) {
     //   Guárdalo en una constante llamada total.
 
     // ESCRIBE AQUÍ TU CÓDIGO.
+    const total = subtotal - descuento;
 
 
 
@@ -442,6 +462,11 @@ function calcularReserva(reserva) {
 
     // ESCRIBE AQUÍ EL RETURN.
 
-
+    return {
+        subtotal,
+        descuento,
+        total,
+        servicio
+    };
 
 }
