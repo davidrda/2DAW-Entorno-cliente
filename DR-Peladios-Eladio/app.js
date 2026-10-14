@@ -145,14 +145,20 @@ function buscarServicio(id) {
 function renderizarServicios() {
 
     let cardsHtml = '';
-    let optionHtml = '';
+    // La primera opción del <select> es un texto guía: aparece marcada
+    // (selected) pero no se puede elegir (disabled) y su value está vacío.
+    let optionHtml = `
+        <option value="" selected disabled>
+        - Selecciona el servicio -
+        </option>
+    `;
 
     for (const servicio of SERVICIOS) {
 
         // += AÑADE al texto anterior (con = se perdería la tarjeta previa).
         // Los template literals (` `) permiten varias líneas y ${expresión}.
         cardsHtml += `
-          <article class="article">
+          <article class="card">
 
               <h3>${servicio.name}</h3>
 
@@ -351,122 +357,113 @@ function calcularReserva(reserva) {
     // let porque subtotal cambiará al sumar los extras.
     let subtotal = servicio?.precio ?? 0;
 
-    
-    // ==================================================================
-    // PASO 3. EXTRAS
-    // reserva.extras es un array de claves de EXTRAS: ['lavado', 'cejas']
-    // ==================================================================
+    // Array donde guardaremos los objetos completos de los extras elegidos
+    // (con nombre y precio), para poder mostrarlos luego en el ticket.
+    const extrasDetalle = [];
 
-    // ACTIVIDAD 1: recorre reserva.extras con for...of.
-    //   - ¿Qué variable representa cada extra seleccionado?
-    //   - ¿Cuántas vueltas da con dos extras? ¿Y con el array vacío?
-
-    // ACTIVIDAD 2: dentro del bucle, obtén el objeto del extra.
-    //   PISTA: para usar el contenido de una variable como clave, corchetes:
-    //          const clave = 'lavado'; EXTRAS[clave]
-    //   - ¿Por qué no sirve EXTRAS.clave?
-
-    // ACTIVIDAD 3: comprueba que el extra existe antes de sumarlo.
-    //   PISTA: EXTRAS['inexistente'] devuelve undefined.
-
-    // ACTIVIDAD 4: si existe, súmalo a subtotal.
-    //   PISTA: let total = 10; total += 5;  // 15
-    //   - ¿Qué propiedad del extra guarda el precio?
-    //
-    // COMPROBACIÓN: servicio 12 € + lavado 100 € + cejas 3 € = 115 €.
-    //               Sin extras = 12 €.
-
-    // ESCRIBE AQUÍ EL CÓDIGO DE LAS ACTIVIDADES 1, 2, 3 Y 4.
-
+    // Recorre las claves de los extras marcados: ['lavado', 'cejas']
     for (const extra of reserva.extras) {
 
+        // Busca el objeto del extra en EXTRAS usando la clave.
         const datosExtra = EXTRAS[extra];
 
-        if(datosExtra) {
-            subtotal += datosExtra.precio;
+        // Si la clave no existe en EXTRAS (undefined), salta al siguiente extra.
+        if (!datosExtra) {
+            continue;
         }
+
+        // Suma el precio del extra al subtotal.
+        subtotal +=  datosExtra.precio;
+
+        // Guarda el extra para el detalle del ticket.
+        extrasDetalle.push(datosExtra);
+
     }
 
+    // Del bucle hacia fuera: esto se calcula UNA sola vez, con todos los
+    // extras ya sumados.
 
+    // Porcentaje de descuento acumulado (0.05 = 5 %). Empieza en 0.
+    let porcentajeDescuento = 0;
 
-
-    // ==================================================================
-    // PASO 4. DESCUENTOS
-    // DESCUENTO_MIEMBROS = 0.05 | CUPON_DESCUENTO = 0.10 | CODIGO_CUPON
-    // ==================================================================
-
-    // ACTIVIDAD 5: declara la variable del porcentaje total de descuento.
-    //   - ¿Qué valor inicial? ¿let o const? ¿Por qué?
-
-    // ACTIVIDAD 6: si reserva.esMiembro (booleano), suma DESCUENTO_MIEMBROS.
-    //   - ¿Qué estructura condicional usarías?
-
-    // ACTIVIDAD 7: si reserva.coupon === CODIGO_CUPON, suma CUPON_DESCUENTO.
-    //   El cupón ya viene normalizado (trim + toUpperCase) desde
-    //   leerFormulario(), así que basta con ===.
-    //
-    // CRITERIO: los descuentos se SUMAN (5 % + 10 % = 15 %).
-    //           No se aplica uno y luego otro sobre el resultado reducido.
-
-    // ESCRIBE AQUÍ EL CÓDIGO DE LAS ACTIVIDADES 5, 6 Y 7.
-
-    let porcentajeTotal = 0;
-
-    if(reserva.esMiembro){
-        porcentajeTotal += DESCUENTO_MIEMBROS;
+    // Descuento por ser miembro.
+    if(reserva.esMiembro) {
+        porcentajeDescuento += DESCUENTO_MIEMBROS;
     }
 
-    if(reserva.coupon === CODIGO_CUPON){
-        porcentajeTotal += CUPON_DESCUENTO;
+    // Descuento por cupón: solo si el código coincide.
+    if (reserva.coupon === CODIGO_CUPON){
+        porcentajeDescuento += CUPON_DESCUENTO;
     }
 
+    // Euros que se descuentan = subtotal * porcentaje.
+    const descuento = subtotal * porcentajeDescuento;
 
-
-    // ==================================================================
-    // PASO 5. IMPORTE DEL DESCUENTO
-    // ==================================================================
-
-    // ACTIVIDAD 8: calcula cuántos euros supone el porcentaje.
-    //   Ejemplo: subtotal 100 y porcentaje 0.15 -> 15 €.
-    //   PISTA: porcentaje de una cantidad = cantidad * porcentaje.
-    //   Guárdalo en una constante.
-
-    // ESCRIBE AQUÍ TU CÓDIGO.
-    const descuento = subtotal * porcentajeTotal;
-
-
-
-    // ==================================================================
-    // PASO 6. PRECIO FINAL
-    // ==================================================================
-
-    // ACTIVIDAD 9: calcula lo que paga el cliente.
-    //   Ejemplo: subtotal 100 € - descuento 15 € = 85 €.
-    //   Guárdalo en una constante llamada total.
-
-    // ESCRIBE AQUÍ TU CÓDIGO.
+    // Lo que paga el cliente.
     const total = subtotal - descuento;
 
-
-
-    // ==================================================================
-    // PASO 7. DEVOLVER RESULTADOS
-    // ==================================================================
-
-    // ACTIVIDAD 10: devuelve un objeto con subtotal, descuento y total.
-    //   Añade también servicio para poder mostrar su nombre en el resumen.
-    //   - ¿Qué palabra reservada devuelve un valor?
-    //   - ¿Cómo se crea un objeto literal? ¿Y con la sintaxis abreviada?
-    //   OBJETIVO: const resultado = calcularReserva(reserva);
-    //             resultado.subtotal / resultado.descuento / resultado.total
-
-    // ESCRIBE AQUÍ EL RETURN.
-
+    // Devuelve todos los datos del cálculo en un objeto.
     return {
+        servicio,
+        extrasDetalle,
         subtotal,
+        porcentajeDescuento,
         descuento,
-        total,
-        servicio
+        total
     };
 
 }
+
+// Devuelve un mensaje distinto según la edad del cliente.
+function obtenerMensajeEdad(edad){
+    // Menor que la edad mínima de la tienda (16).
+    if (edad < TIENDA.edadMinima){
+        return 'No cumples con la edad mínima'
+    } else if (edad >= 65) {
+        return ' bienvenido jubilado!'
+    } else {
+        return 'Contamos contigo!'
+    }
+}
+
+// Devuelve un mensaje según el día elegido.
+// switch compara "dia" con cada case; return corta la función al acertar.
+function obtenerMensajeDia(dia){
+
+    switch (dia) {
+
+        case 'Lunes':
+            return 'Empezar a tope la semana!'
+        case 'Viernes':
+            return 'Acabar a tope la semana!'
+        case 'Sábado':
+            return 'Bendito sábado!'
+        // default: se ejecuta si el día no coincide con ningún case.
+        default:
+            return 'Un buen día para retocarse!' 
+    }
+
+
+}
+
+// Prepara los datos para pintar el ticket de la reserva.
+function renderizarTicket(){
+    // 1. Lee lo que el usuario ha escrito en el formulario.
+    const reserva = leerFormulario();
+
+    // 2. Calcula subtotal, descuento y total.
+    const resultado = calcularReserva(reserva);
+
+    // Nombre del servicio, o un texto por defecto si no hay ninguno elegido.
+    const nombreServicio = resultado.servicio?.name ?? 'Sin seleccionar';
+
+    // Convierte el array de extras en un texto: "Lavado gostoso, Pulido de cejas".
+    // map() saca solo el nombre de cada extra; join() los une con comas.
+    const nombreExtras = resultado.extrasDetalle
+            .map(extra => extra.nombre)
+            .join(', ');
+
+}
+
+// Pinta las tarjetas y el <select> al cargar la página.
+renderizarServicios();
