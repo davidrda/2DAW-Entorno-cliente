@@ -1,15 +1,5 @@
 'use strict';
 
-// Peladillos Eladio: reserva de servicios de barbería.
-// Flujo: DATOS -> funciones que los procesan -> HTML que ve el usuario.
-
-
-// ============================================================================
-// DATOS
-// ============================================================================
-
-// Objeto: agrupa datos relacionados. Se accede con TIENDA.nombre.
-// const impide reasignar TIENDA, pero sus propiedades SÍ se pueden modificar.
 const TIENDA = {
     nombre: 'Peladillos Eladio',
     divisa: 'EUR',
@@ -17,9 +7,7 @@ const TIENDA = {
     edadMinima: 16
 };
 
-// Array de objetos. Los índices empiezan en 0: SERVICIOS[0].name -> 'Corte clásico'
 const SERVICIOS = [
-
     {
         id: 'clasico',
         name: 'Corte clásico',
@@ -40,14 +28,9 @@ const SERVICIOS = [
         precio: 20,
         duracion: 15,
     },
-
 ];
 
-// Objeto de objetos: se accede por clave, no por posición.
-// Las tres formas dan el mismo dato:
-//   EXTRAS.lavado.nombre | EXTRAS['lavado'].nombre | EXTRAS.lavado['nombre']
 const EXTRAS = {
-
     lavado: {
         nombre: 'Lavado gostoso',
         precio: 100
@@ -57,23 +40,14 @@ const EXTRAS = {
         nombre: 'Pulido de cejas',
         precio: 3
     },
-
 };
 
-// Constantes con nombre en vez de números "mágicos" (0.05 = 5 %).
 const DESCUENTO_MIEMBROS = 0.05;
 
 const CODIGO_CUPON = 'ELADIO10';
 
 const CUPON_DESCUENTO = 0.10;
 
-
-// ============================================================================
-// ELEMENTOS DEL DOM
-// ============================================================================
-
-// querySelector('#id') busca el elemento con ese id. Guardamos la referencia
-// para poder modificarlo desde JS.
 const servicesGrid = document.querySelector('#servicesGrid');
 
 const serviceSelect = document.querySelector('#serviceSelect');
@@ -84,15 +58,8 @@ const ticketContent = document.querySelector('#ticketContent');
 
 const formMessage = document.querySelector('#formMessage');
 
-
-// ============================================================================
-// FUNCIONES AUXILIARES
-// ============================================================================
-
-// Número -> texto con formato de dinero. formatMoney(10) -> "10,00 €"
+// Le da formato al dinero
 function formatMoney(importe) {
-
-    // Intl.NumberFormat usa el idioma y la divisa de TIENDA.
     const formatter = new Intl.NumberFormat(
         TIENDA.idioma,
         {
@@ -104,11 +71,8 @@ function formatMoney(importe) {
     return formatter.format(importe);
 }
 
-// Convierte caracteres especiales en entidades HTML para que se muestren
-// como texto y no como etiquetas (evita XSS con innerHTML).
-// OJO: & va PRIMERO. Si fuera después, volvería a escapar el & de &lt;, &gt;...
+// Reemplaza carácteres HTML por String
 function escapeHtml(value) {
-
     return String(value)
 
         .replaceAll('&', '&amp;')
@@ -120,43 +84,32 @@ function escapeHtml(value) {
         .replaceAll('"', '&quot;')
 
         .replaceAll("'", '&#039;');
-
 }
 
-// find() devuelve el PRIMER elemento que cumpla la condición, o undefined
-// si ninguno la cumple.
+// Buscas servicio, te devuelve el primero que encuentra con ese ID
 function buscarServicio(id) {
-
     return SERVICIOS.find(
-
-        // Función flecha: "¿el id de este servicio es el que busco?"
         (servicio) => servicio.id === id
-
     );
-
 }
 
-
-// ============================================================================
-// PINTAR SERVICIOS
-// ============================================================================
-
-// Versión 1: construir HTML como texto y volcarlo con innerHTML.
+// Renderizado de servicios mediante innerHTML
 function renderizarServicios() {
 
     let cardsHtml = '';
-    // La primera opción del <select> es un texto guía: aparece marcada
-    // (selected) pero no se puede elegir (disabled) y su value está vacío.
+
+    // selected: opción seleccionada por defecto
+    // disabled: esa opción sale en gris, no se puede pulsar
     let optionHtml = `
-        <option value="" selected disabled>
+     <option value="" selected disabled>
         - Selecciona el servicio -
-        </option>
+     </option>
+
     `;
+
 
     for (const servicio of SERVICIOS) {
 
-        // += AÑADE al texto anterior (con = se perdería la tarjeta previa).
-        // Los template literals (` `) permiten varias líneas y ${expresión}.
         cardsHtml += `
           <article class="card">
 
@@ -176,102 +129,79 @@ function renderizarServicios() {
                 ${servicio.name} - ${formatMoney(servicio.precio)}
             </option>
         `;
-
     }
 
-    // Se asigna UNA vez, fuera del bucle.
-    servicesGrid.innerHTML = cardsHtml;
-    serviceSelect.innerHTML = optionHtml;
+        // se renderizan las cards dentro del HTML de servicesGrid
+        servicesGrid.innerHTML = cardsHtml;
+
+        // se renderizan las opciones dentro del HTML de serviceSelect
+        serviceSelect.innerHTML = optionHtml;
 
 }
-
-// Versión 2: crear nodos del DOM uno a uno (sin interpretar HTML).
-// Más código, pero más seguro: textContent nunca ejecuta etiquetas.
+// Renderizado de servicios mediante elementos del DOM
 function renderizarServiciosCreate() {
 
-    // En cada vuelta, "servicio" es UNO de los objetos del array.
-    // const vale porque cada vuelta crea una variable nueva.
     for (const servicio of SERVICIOS) {
 
-        // createElement crea el nodo, pero NO aparece en la página
-        // hasta que se añade a un elemento que ya esté en el documento.
-        const article = document.createElement('article');
+        const article = document.createElement('article'); // creas un article
 
-        article.classList.add('card');
+        article.classList.add('card'); // le añades la clase 'card'
 
-        const title = document.createElement('h3');
+        const title = document.createElement('h3'); // creas un title h3
 
-        // textContent inserta TEXTO: '<strong>' se vería literal.
-        // innerHTML lo interpretaría como etiqueta.
-        title.textContent = servicio.name;
+        title.textContent = servicio.name; // a title le insertas el nombre del servicio
 
-        const duracion = document.createElement('p');
+        const duracion = document.createElement('p'); // creas duración como un p
 
-        duracion.textContent = `${servicio.duracion} min`;
+        duracion.textContent = `${servicio.duracion} min`; // a duración le insertas los min
 
-        const precio = document.createElement('span');
+        const precio = document.createElement('span'); // creas precio como un span
 
-        precio.classList.add('price');
+        precio.classList.add('price'); // a precio le insertas la clase 'price'
 
-        precio.textContent = formatMoney(servicio.precio);
+        precio.textContent = formatMoney(servicio.precio); // a precio le insertas el precio formateado
 
-        // append() mete los nodos como hijos; el orden importa.
+        // al articulo le añades titulo, duracion y precio
         article.append(
             title,
             duracion,
             precio
         );
 
-        // Último paso: conectar la tarjeta a la página.
+        // añades el artículo a servicesGrid
         servicesGrid.append(article);
-
     }
-
 }
 
-
-// ============================================================================
-// FORMULARIO
-// ============================================================================
-
-// Lee el formulario y devuelve un objeto con tipos ya correctos
-// (string, number, array, boolean). Solo LEE: no valida ni calcula.
+// Retorna los datos puestos en el formulario
 function leerFormulario() {
 
-    // FormData lee los campos por su atributo name (no por id).
+    // Lee todo el formulario de una vez, luego puedes sacar su value con un .get
+    // Por ejemplo: En el formulario pongo David, entonces clientName="David", y así con todo
     const datos = new FormData(bookingForm);
 
-    // Se lee de dentro hacia fuera:
-    //   get()  -> valor del campo, o null si no existe
-    //   ??     -> si es null/undefined, usa ''
-    //   String -> asegura tipo texto
-    //   trim   -> quita espacios de los extremos (devuelve un string nuevo)
+    // Guardo en una variable nombre gracias a 'datos'
+    // .get me da el value que le pida, en este caso del clientName, sino devuelve nulo
+    // .trim le quita los espacios del principio y del final
     const nombre = String(
         datos.get('clientName') ?? ''
     ).trim();
 
-    // Los campos de formulario siempre llegan como TEXTO.
-    // '25' + 1 daría '251'; Number('25') + 1 da 26.
-    // Si no es numérico, Number() devuelve NaN (se comprueba en validarReserva).
+    // datos.get devuelve la edad pero pasado a Number
     const edad = Number(
         datos.get('age')
     );
 
-    // get() solo devuelve el PRIMER valor; getAll() devuelve todos en un array.
-    // Varios checkbox con el mismo name="extras" -> ['lavado', 'cejas'] o [].
+    // datos.getAll devuelve todos los extras que seleccione y los mapea a String
     const extras = datos
         .getAll('extras')
         .map(String);
 
-    // Normaliza el cupón: '  eladio10  ' -> 'ELADIO10'.
-    const coupon = String(
-        datos.get('coupon') ?? ''
-    )
+    // Pasa a String el cupon (si está vacio devuelve nulo) y elimina espacios y pasa a MAYUS
+    const coupon = String(datos.get('coupon') ?? '')
         .trim()
         .toUpperCase();
 
-    // Guardamos el id (value de la opción), no el precio:
-    // el precio se recupera luego con buscarServicio().
     const servicioId = String(
         datos.get('service') ?? ''
     );
@@ -280,10 +210,9 @@ function leerFormulario() {
         datos.get('day') ?? ''
     );
 
-    // Checkbox: marcado -> 'on'; sin marcar -> null (no true/false).
+    // Devuelve true si member es 'on'
     const esMiembro = datos.get('member') === 'on';
 
-    // Propiedad abreviada: { nombre } equivale a { nombre: nombre }.
     return {
         nombre,
         edad,
@@ -293,130 +222,96 @@ function leerFormulario() {
         coupon,
         esMiembro
     };
-
 }
 
-// Devuelve un array con TODOS los errores (vacío = reserva válida).
-// No los muestra: eso lo decide quien la llame.
+// Se valida y se reunen errores si hay
 function validarReserva(reserva) {
 
     const errores = [];
-
-    // '' es false, y trim() ya convirtió "   " en ''.
+    
+    // si no escribes nombre:
     if (!reserva.nombre) {
-
         errores.push('Escribe tu nombre');
-
     }
 
-    // OJO: NaN === NaN es false, por eso se usa Number.isNaN().
+    // si no pones un número:
     if (Number.isNaN(reserva.edad)) {
-
         errores.push('La edad debe de ser un número');
-
-    } else if (
+    } else if ( // si pones un número, se valida que este dentro del rango permitido
         reserva.edad < TIENDA.edadMinima ||
         reserva.edad > 120
     ) {
-
         errores.push(
             `La edad debe de estar entre ${TIENDA.edadMinima} y 120`
         );
-
     }
 
-    // buscarServicio() devuelve undefined si no existe -> !undefined es true.
+    // si no existe el servicio:
     if (!buscarServicio(reserva.servicioId)) {
-
         errores.push('El servicio no existe');
-
     }
 
+    // si no has seleccionado dia
     if (!reserva.dia) {
-
         errores.push('Selecciona un día');
-
     }
 
     return errores;
-
 }
 
 
-// ============================================================================
-// CÁLCULO DEL PRECIO (EJERCICIO)
-// ============================================================================
-
-// Recibe el objeto de leerFormulario() y devuelve { subtotal, descuento, total }.
-// No debe modificar SERVICIOS, EXTRAS ni la reserva recibida.
 function calcularReserva(reserva) {
 
     const servicio = buscarServicio(reserva.servicioId);
 
-    // ?. evita error si servicio es undefined; ?? 0 da un valor por defecto.
-    // let porque subtotal cambiará al sumar los extras.
+    // buscas el precio del servicio y se guarda en el subtotal
+    // servicio?.precio: accede al precio si servicio existe
+    // "?? 0": si lo de la izquierda es null o undefined, usa lo de la derecha
     let subtotal = servicio?.precio ?? 0;
 
-    // Array donde guardaremos los objetos completos de los extras elegidos
-    // (con nombre y precio), para poder mostrarlos luego en el ticket.
     const extrasDetalle = [];
 
-    // Recorre las claves de los extras marcados: ['lavado', 'cejas']
-    for (const extra of reserva.extras) {
+    // Objetivo: sacar el subtotal
+    for (const extraID of reserva.extras) {
 
-        // Busca el objeto del extra en EXTRAS usando la clave.
-        const datosExtra = EXTRAS[extra];
+        // guarda cada extra en cada vuelta
+        const extra = EXTRAS[extraID];
 
-        // Si la clave no existe en EXTRAS (undefined), salta al siguiente extra.
-        if (!datosExtra) {
+        // si no existe, ve a la siguiente vuelta
+        if (!extra) {
             continue;
         }
 
-        // Suma el precio del extra al subtotal.
-        subtotal +=  datosExtra.precio;
-
-        // Guarda el extra para el detalle del ticket.
-        extrasDetalle.push(datosExtra);
-
+        // al subtotal le sumas el precio del extra y lo insertas en extrasDetalle
+        subtotal +=  extra.precio;
+        extrasDetalle.push(extra);
     }
 
-    // Del bucle hacia fuera: esto se calcula UNA sola vez, con todos los
-    // extras ya sumados.
+        let porcentajeDescuento = 0;
 
-    // Porcentaje de descuento acumulado (0.05 = 5 %). Empieza en 0.
-    let porcentajeDescuento = 0;
+        if(reserva.esMiembro) {
+            porcentajeDescuento += DESCUENTO_MIEMBROS;
+        }
 
-    // Descuento por ser miembro.
-    if(reserva.esMiembro) {
-        porcentajeDescuento += DESCUENTO_MIEMBROS;
-    }
+        if (reserva.coupon === CODIGO_CUPON){
+            porcentajeDescuento += CUPON_DESCUENTO;
+        }
 
-    // Descuento por cupón: solo si el código coincide.
-    if (reserva.coupon === CODIGO_CUPON){
-        porcentajeDescuento += CUPON_DESCUENTO;
-    }
+        const descuento = subtotal * porcentajeDescuento;
 
-    // Euros que se descuentan = subtotal * porcentaje.
-    const descuento = subtotal * porcentajeDescuento;
+        const total = subtotal - descuento;
 
-    // Lo que paga el cliente.
-    const total = subtotal - descuento;
-
-    // Devuelve todos los datos del cálculo en un objeto.
-    return {
-        servicio,
-        extrasDetalle,
-        subtotal,
-        porcentajeDescuento,
-        descuento,
-        total
-    };
-
+        return {
+            servicio,
+            extrasDetalle,
+            subtotal,
+            porcentajeDescuento,
+            descuento,
+            total
+        };
 }
 
-// Devuelve un mensaje distinto según la edad del cliente.
 function obtenerMensajeEdad(edad){
-    // Menor que la edad mínima de la tienda (16).
     if (edad < TIENDA.edadMinima){
         return 'No cumples con la edad mínima'
     } else if (edad >= 65) {
@@ -426,44 +321,127 @@ function obtenerMensajeEdad(edad){
     }
 }
 
-// Devuelve un mensaje según el día elegido.
-// switch compara "dia" con cada case; return corta la función al acertar.
 function obtenerMensajeDia(dia){
-
     switch (dia) {
-
         case 'Lunes':
             return 'Empezar a tope la semana!'
         case 'Viernes':
             return 'Acabar a tope la semana!'
         case 'Sábado':
             return 'Bendito sábado!'
-        // default: se ejecuta si el día no coincide con ningún case.
         default:
-            return 'Un buen día para retocarse!' 
+            return 'Un buen día para retocarse!'
     }
-
-
 }
 
-// Prepara los datos para pintar el ticket de la reserva.
-function renderizarTicket(){
-    // 1. Lee lo que el usuario ha escrito en el formulario.
+function renderizarTicket() {
+
+    // Lees el formulario: nombre, edad, etc...
     const reserva = leerFormulario();
 
-    // 2. Calcula subtotal, descuento y total.
+    // Calculas la reserva: subtotal, total, etc...
     const resultado = calcularReserva(reserva);
 
-    // Nombre del servicio, o un texto por defecto si no hay ninguno elegido.
-    const nombreServicio = resultado.servicio?.name ?? 'Sin seleccionar';
+    // Coge el nombre del servicio que se ha seleccionado en la reserva
+    // Coge el nombre si servicio existe (.servicio?.name)
+    // " ?? 'Sin seleccionar' ": si lo de la izquierda es null, usa lo de la derecha
+    const nombreServicio =
+        resultado.servicio?.name ?? 'Sin seleccionar';
 
-    // Convierte el array de extras en un texto: "Lavado gostoso, Pulido de cejas".
-    // map() saca solo el nombre de cada extra; join() los une con comas.
-    const nombreExtras = resultado.extrasDetalle
-            .map(extra => extra.nombre)
-            .join(', ');
+    // Coge el nombre del extra (cogido de la reserva) y separalas por ,
+    const nombresExtras = resultado.extrasDetalle
+        .map(extra => extra.nombre)
+        .join(', ');
 
+    // Pones la info que has recogido en el ticket (RESUMEN DE LA RESERVA)
+    ticketContent.innerHTML = `
+            <div class="ticket-row">
+                <span>Cliente</span>
+                <strong>${escapeHtml(reserva.nombre || 'Sin indicar')} </strong>
+            </div>
+
+            <div class="ticket-row">
+                <span>Servicio</span>
+                <strong>${escapeHtml(nombreServicio)}</strong>
+            </div>
+
+            <div class="ticket-row">
+                <span>Día</span>
+                <strong>${escapeHtml(reserva.dia|| 'Sin seleccionar')} </strong>
+            </div>
+
+            <div class="ticket-row">
+                <span>Extras</span>
+                <strong>${escapeHtml(nombresExtras || 'Ninguno')} </strong>
+            </div>
+
+            <div class="ticket-row">
+                <span>Miembro</span>
+                <strong>${reserva.esMiembro ? 'Sí' : 'No'} </strong>
+            </div>
+
+            <div class="ticket-row">
+                <span>Subtotal</span>
+                <strong>${formatMoney(resultado.subtotal)} </strong>
+            </div>
+
+            <div class="ticket-row">
+                <span>Descuento</span>
+                <strong>${formatMoney(resultado.descuento)} </strong>
+            </div>
+
+             <div class="ticket-row">
+                <span>Total</span>
+                <strong>${formatMoney(resultado.total)} </strong>
+            </div>
+
+    `;
 }
 
-// Pinta las tarjetas y el <select> al cargar la página.
+// Cuando se produzca un submit en bookingForm, ejecuta esta función
+// 1er parámetro: que acción hacer cuando se envía el formulario
+// 2do parámetro: que hacer cuando ocurra (callback)
+bookingForm.addEventListener( 'submit'  , function(event) {
+
+    /*
+        Significa: “cancela el comportamiento por defecto de este evento”.
+
+        Qué hace un formulario por defecto
+
+        Al pulsar el botón de enviar, el navegador hace esto:
+
+        1. Envía los datos a la URL del action del formulario.
+        2. Recarga la página.
+
+        ---- Por qué es un problema aquí?
+
+        Tú no quieres enviar nada ni recargar.
+        Quieres que JavaScript procese los datos en la propia página. 
+        
+        Sin preventDefault():
+            La página se recarga antes de que tu código termine.
+            Se pierden el mensaje de formMessage y el ticket que acabas de pintar.
+    */
+    event.preventDefault();
+
+    const reserva = leerFormulario();
+
+    const errores = validarReserva(reserva);
+
+    // Si hay errores, para aquí
+    if (errores.length > 0) {
+        formMessage.textContent = errores.join(' ');
+
+        return;
+    }
+
+    const resultado = calcularReserva(reserva);
+
+    formMessage.textContent=
+     `Reserva preparada para ${reserva.nombre}. ` +
+     `Total: ${formatMoney(resultado.total)}. `;
+
+     renderizarTicket();
+});
+
 renderizarServicios();
