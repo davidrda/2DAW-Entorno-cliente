@@ -6,6 +6,9 @@
 // El script se carga con defer, así que el DOM ya existe cuando se ejecuta.
 const $ = selector => document.querySelector(selector);
 
+// "Base de datos" en memoria: un array de objetos, uno por tarea.
+// const no impide modificar el contenido (push, etc.), solo reasignar la variable.
+// Si recargas la página, los cambios se pierden (no hay almacenamiento permanente).
 const tareas = [
 
     {
@@ -32,8 +35,12 @@ const tareas = [
 ];
 
 
+// Contador para dar un id único a cada tarea nueva (las 3 de arriba ya usan 1, 2 y 3).
+// Usa let porque su valor irá cambiando.
 let siguienteId = 4;
 
+// Texto que el usuario escribe en el buscador. Se guarda aquí para que
+// renderizar() sepa por qué filtrar.
 let busqueda = '';
 
 
@@ -43,6 +50,9 @@ let busqueda = '';
 let seguimiento = null;
 
 
+// Los estados posibles = las columnas del tablero.
+// Cada valor coincide con el id de un elemento del HTML (#pendiente, #en-proceso...),
+// por eso renderizar() puede recorrerlos para encontrar cada columna.
 const estados = [
     'pendiente',
     'en-proceso',
@@ -112,19 +122,110 @@ function throttle(fn, ms) {
 // Los datos viajan en event.detail.
 function notificarCambio() {
 
-  const total = tareas.length;
+    const total = tareas.length;
 
-  const tareasNoCompletadas = tareas.filter(
+    // filter() crea un array nuevo solo con las tareas que cumplen la condición
+    // (aquí: las que NO están completadas). El array original no cambia.
+    const tareasNoCompletadas = tareas.filter(
     t => t.estado !== 'completada'
-  );
+    );
 
-  $('#tablero').dispatchEvent(new CustomEvent ( 'tareas:cambiadas', { bubbles: true,
+    // dispatchEvent "lanza" el evento sobre #tablero, como si el usuario hubiera hecho clic.
+    // CustomEvent(nombre, opciones) crea un evento inventado por nosotros.
+    $('#tablero').dispatchEvent(new CustomEvent ( 'tareas:cambiadas', {
 
-    detail: {
-      total: total,
-      noCompletadas: tareasNoCompletadas
+        // Hace que el evento suba hacia los elementos padre (hasta document)
+        bubbles: true,
+
+        // Datos extra que recibirá quien escuche el evento (en event.detail)
+        detail: {
+            total: total,
+            noCompletadas: tareasNoCompletadas.length
+        }
+    }))
+}
+
+// Escucha en document: como el evento sube (bubbles), llega hasta aquí
+// aunque se lance desde #tablero. Por ahora solo muestra los datos en la consola.
+document.addEventListener('tareas:cambiadas', event => {
+
+    console.log('evento recibido: ', event.type);
+    console.log('detalles: ', event.detail);
+
+
+});
+
+// Dibuja las tareas en pantalla. Se vuelve a llamar cada vez que algo cambia:
+// primero vacía las columnas y luego las rellena desde cero con el array tareas.
+function renderizar(){
+
+    // replaceChildren() sin argumentos borra todo lo que hay dentro del elemento.
+    // Así evitamos que las tarjetas se dupliquen al renderizar de nuevo.
+    for (const estado of estados){
+        $('#' + estado).replaceChildren();
     }
 
+    // Valor elegido en el desplegable de prioridad ('todas', 'alta', 'media'...)
+    const filtro = $('#filtro').value;
 
-     }  )    )
+    for (const tarea of tareas) {
+
+        // Si hay un filtro activo y la prioridad no coincide, salta a la siguiente tarea.
+        // continue = "termina esta vuelta del bucle y pasa a la siguiente".
+        if ( filtro !== 'todas' && tarea.prioridad !== filtro) {
+            continue;
+        }
+
+        // Pasa título y búsqueda a minúsculas para no distinguir mayúsculas.
+        // includes() comprueba si el título contiene el texto buscado.
+        // Si NO lo contiene (!), la tarea se salta.
+        if (
+            !tarea.titulo
+               .toLocaleLowerCase()
+               .includes(busqueda)
+        ) {
+            continue;
+        }
+
+
+       // createElement crea el elemento en memoria; aún no se ve en la página
+       const tarjeta = document.createElement('article');
+
+
+
+       tarjeta.className= 'tarea';
+       // <article class="tarea"></article>
+
+       // dataset guarda datos en atributos data-* del HTML.
+       // Sirven para saber luego qué tarea es esta tarjeta (p. ej. al hacer clic).
+       tarjeta.dataset.id = tarea.id;
+       tarjeta.dataset.prioridad = tarea.prioridad; 
+       // <article class="tarea" data-id="1" data-prioridad="media">
+       // <h4>Comprar mortadela</h4>
+       //</article>
+
+       const titulo = document.createElement('h4');
+       //<h4>Comprar mortadela</h4>
+       // textContent inserta texto plano (no HTML): es seguro frente a inyección de código (XSS)
+       titulo.textContent = tarea.titulo;
+
+       // append mete el h4 dentro del article
+       tarjeta.append(titulo);
+       // <article class="tarea" data-id="1" data-prioridad="media">
+       // <h4>Comprar mortadela</h4>
+       //</article>
+
+       const detalle = document.createElement('small');
+       detalle.textContent = 'Prioridad: ' + tarea.prioridad;
+
+       // append admite varios elementos a la vez: el texto y un salto de línea (<br>)
+       tarjeta.append(detalle, document.createElement('br'));
+
+     
+
+
+
+
+    }
+
 }
